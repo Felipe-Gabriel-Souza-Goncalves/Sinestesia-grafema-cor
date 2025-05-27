@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <title>Sinestesia grafema-cor</title>
+
+    <style>
+        header{
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        #resultado{
+            width: 80%;
+            margin: 0 auto;
+            text-align: justify;
+        }
+        #campo{
+            box-sizing: border-box;
+            padding: 50px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .caracter{
+            font-size: 75px;
+            margin: 10px;
+        }
+        #opcoes{
+            text-align: center;
+        }
+        .optCor{
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 4px solid lightgray;
+        }
+        #corPersonalizada{
+            width: 220px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 style="font-size: 2.5em;">Sinestesia grafema-cor</h1>
+        <p><i>O que é sinestesia grafema-cor?</i><br>
+            É a mistura de sentidos em que associa cores a letras, números ou palavras!    
+        </p>
+        <hr>
+        <div>
+            <button id="btnModoEscuro" onclick="modoEscuro()">Modo escuro</button>
+            <label for="fontSize">Tamanho da letra</label><input type="range" value="75" min="1" max="150"  id="fontSize">
+        </div>
+    </header>
+    <div id="resultado">
+        <h1 style="font-size: 3em;text-align: center;">Meu tipo de sinestesia!</h1>
+        <hr>
+        <div id="campo">
+    
+        </div>
+    </div>
+    <div id="opcoes">
+        <p style="font-size: 2.5em;">Caracter: <span id="carac"></span></p>
+        <div class="cores">
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div><br>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div><br>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            <div class="optCor" onclick="trocarCor()"></div>
+            
+            <br>
+            <label>Cor personalizada (opcional)</label>
+            <input type="color">
+            <input type="text" placeholder="Coloque a cor aqui (hexadecimal)" id="corPersonalizada">
+            <button onclick="corPersonalizada(caracAtual)">Enviar</button><br>
+            <button onclick="gerarPDF()">Gerar PDF dos caracteres</button>
+        </div>
+    </div>
+
+    <script>
+        const cores = ["#000000","#404040","#8F8F8F","#EBEBEB","#FFFFFF","#FF8585","#FF85EF","#AF85FF","#859DFF","#85DAFF","#85FFB4","#9BFF80","#F7FF80","#FFD780","#FF0000","#FF00A2","#A600FF","#0040FF","#00E1FF","#00FF91","#2BFF00","#FFFF00","#FFA200", ]
+        const caracteres = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z', '0','1','2','3','4','5','6','7','8','9']
+        let temaEscuro = false
+        let caracAtual = undefined
+
+        caracteres.forEach((caracter, i) =>{
+            const span = document.createElement("span")
+            span.innerText = caracter
+            span.classList.add("caracter")
+            span.setAttribute("onclick", `escolher(${i})`)
+
+            document.getElementById("campo").appendChild(span)
+        })
+
+        // Escolher letra
+        function escolher(j){
+            const optCor = document.getElementsByClassName("optCor")
+            const span = document.getElementsByClassName("caracter")
+
+            for(let i = 0; i< optCor.length; i++){
+                optCor[i].setAttribute("onclick", `trocarCor('${cores[i]}', ${j})`)
+                optCor[i].style.backgroundColor = cores[i]
+            }
+
+            document.getElementById("carac").innerText = span[j].innerText
+            caracAtual = span[j].innerText
+        }
+
+        // Mudar a cor
+        function trocarCor(cor, e){
+            document.getElementsByClassName(`caracter`)[e].style.color = cor
+        }
+
+        // Modo escuro
+        function modoEscuro(){
+            temaEscuro = !temaEscuro
+
+            if(temaEscuro){
+                document.body.style.color = "white"
+                document.body.style.backgroundColor = "black"
+            }
+            if(!temaEscuro){
+                document.body.style.color = "black"
+                document.body.style.backgroundColor = "white"
+            }
+        }
+
+        // Tamanho letra
+        function tamanhoLetra(){
+            const size = document.getElementById("fontSize").value
+            const caracter = document.getElementsByClassName("caracter")
+
+            for(let i = 0; i < caracter.length; i++){
+                caracter[i].style.fontSize = size+"px"
+            }
+        } 
+
+        // Cor personalizada
+        function corPersonalizada(caracter){
+            let index = caracteres.indexOf(caracter.toUpperCase())
+            const corPersonalizada = document.getElementById("corPersonalizada").value 
+            
+            try {
+                document.getElementsByClassName(`caracter`)[index].style.color = corPersonalizada
+            } catch (error) {
+                document.getElementById("corPersonalizada").value = "Cor inválida!" 
+            }
+        }
+
+        function gerarPDF() {
+            const resultado = document.getElementById("resultado")
+            
+            html2pdf().from(resultado).save("meuTipoSinestesia");
+        }
+
+        document.addEventListener("keydown", e =>{
+            if(personalizadoTemFoco){
+                return
+            }
+            if(caracteres.indexOf(e.key.toUpperCase()) != -1){
+                escolher(caracteres.indexOf(e.key.toUpperCase()))
+                caracAtual = e.key.toUpperCase()
+            }
+        })
+
+        document.getElementById("fontSize").addEventListener("input", tamanhoLetra)
+
+
+        // Gambiarras 
+        var personalizadoTemFoco = false
+        document.getElementById("corPersonalizada").addEventListener("focusin", () => {personalizadoTemFoco = true})
+        document.getElementById("corPersonalizada").addEventListener("focusout", () => {personalizadoTemFoco = false})
+    </script>
+</html>
